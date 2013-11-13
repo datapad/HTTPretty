@@ -555,9 +555,8 @@ class Entry(BaseClass):
         status = headers.get('status', self.status)
         if self.body_is_callable:
             status, headers, self.body = self.callable_body(self.request, self.info.full_url(), headers)
-            headers.update({
-                'content-length': len(self.body)
-            })
+            if 'content-length' not in headers or self.method != httpretty.HEAD:
+                headers['content-length'] = len(self.body)
 
         string_list = [
             'HTTP/1.1 %d %s' % (status, STATUSES[status]),
